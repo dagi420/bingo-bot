@@ -1,0 +1,92 @@
+.bingo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.bingo-header {
+  display: flex;
+}
+
+.bingo-header-cell {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  background-color: #f0c674;
+  color: #ffffff;
+  margin: 2px;
+}
+
+.bingo-row {
+  display: flex;
+}
+
+.bingo-cell {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #d1d1d1;
+  margin: 2px;
+  font-size: 18px;
+  background-color: #ffffff;
+  cursor: pointer;
+}
+
+.bingo-cell.marked {
+  background-color: #f0a;
+  color: #fff;
+}
+
+.bingo-cell:hover {
+  background-color: #f0c674;
+}
+
+.called-numbers {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.called-numbers-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.called-number {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: #f0c674;
+  color: white;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+input[type="number"] {
+  width: 60px;
+  padding: 5px;
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+button {
+  padding: 5px 10px;
+  font-size: 16px;
+  background-color: #f0c674;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #f0a;
+}

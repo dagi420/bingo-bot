@@ -3,47 +3,44 @@ const http = require('http');
 const socketIo = require('socket.io');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
-const gameRoutes = require('./routes/gameRoutes'); // Make sure to create this file
+const gameRoutes = require('./routes/gameRoutes');  // Ensure this route file is correctly defined
 
-// Initialize Express app
 const app = express();
-
-// Connect Database
 require('dotenv').config();
 connectDB();
 
-// Init Middleware
 app.use(express.json());
-
-// Define Routes
 app.use('/api/users', userRoutes);
-app.use('/api/games', gameRoutes); // Use the correct route for your game logic
+app.use('/api/games', gameRoutes);
 
-// Basic route for testing
-app.get('/', (req, res) => {
-  res.send('Welcome to the Bingo Game API');
-});
-
-// Create HTTP server and integrate with Socket.io
 const server = http.createServer(app);
 const io = socketIo(server);
+const cardSelections = {};  // Keep track of card selections
 
 io.on('connection', (socket) => {
-  console.log('New user connected');
+    console.log('New user connected');
 
-  socket.on('joinGame', (gameId) => {
-    socket.join(gameId);
-    console.log(`User joined game ${gameId}`);
-  });
+    socket.on('joinGame', (gameId) => {
+        socket.join(gameId);
+        console.log(`User joined game ${gameId}`);
+    });
 
-  socket.on('bingo', (gameId, data) => {
-    io.to(gameId).emit('bingoCalled', data);
-    console.log(`Bingo called in game ${gameId}`);
-  });
+    socket.on('selectCard', (cardId) => {
+        const previousCardId = cardSelections[socket.id];
+        if (previousCardId) {
+            io.emit('cardSelected', { cardId: previousCardId, isSelected: false });
+        }
+        cardSelections[socket.id] = cardId;
+        io.emit('cardSelected', { cardId, isSelected: true });
+    });
 
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
+    socket.on('disconnect', () => {
+        if (cardSelections[socket.id]) {
+            io.emit('cardSelected', { cardId: cardSelections[socket.id], isSelected: false });
+            delete cardSelections[socket.id];
+        }
+        console.log('User disconnected');
+    });
 });
 
 const PORT = process.env.PORT || 5000;

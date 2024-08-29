@@ -1,5 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api');
-const token = '6371705475:AAHk8-26BOmdM9WNHZMdIQtfYM5vXoGecnU'; // Replace with your bot token
+const token = '7217503396:AAG35tU_YyqCBBITotWrXfihp-OXfJwxj34'; // Replace with your bot token
 const User = require('./models/User'); // Adjust the path as needed
 const { v4: uuidv4 } = require('uuid'); // Add this line at the top of your file
 
@@ -7,6 +7,7 @@ const bot = new TelegramBot(token, { polling: true });
 const io = require('socket.io-client');
 const socket = io('http://localhost:5000');
 const connectDB = require('./config/db'); // Ensure this path is correct
+require("dotenv").config();
 
 // Connect to the database
 connectDB();
@@ -29,8 +30,8 @@ let fetch;
     const chatId = msg.chat.id;
 
     // Check if the user is already registered
-   
-    
+
+
     userStates[chatId] = { step: 'awaiting_contact' };
 
     bot.sendMessage(chatId, 'Please share your contact information for registration.', {
@@ -43,7 +44,7 @@ let fetch;
       }
     });
   });
-  
+
   // Handle Contact Sharing
   bot.on('contact', async (msg) => {
     const chatId = msg.chat.id;
@@ -68,12 +69,12 @@ let fetch;
   bot.on('callback_query', async (callbackQuery) => {
     const chatId = callbackQuery.message.chat.id;
     const data = callbackQuery.data;
-  
+
     if (data === 'accept') {
       try {
         const phoneNumber = userStates[chatId].phoneNumber;
         const username = callbackQuery.from.username;
-  
+
         // Check again if the user is already registered
         const existingUser = await User.findOne({ phoneNumber });
         if (existingUser) {
@@ -81,7 +82,7 @@ let fetch;
         } else {
           // Generate a unique token
           const token = uuidv4();
-  
+
           // Save the new user to the database
           const newUser = new User({
             phoneNumber,
@@ -89,25 +90,36 @@ let fetch;
             token,
           });
           await newUser.save();
-  
-          bot.sendMessage(chatId, `Registration successful! Your unique token is: ${token}`);
+
+          bot.sendMessage(chatId, `Registration successful! Your unique token is: ${token}`, {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: "Play",
+                    web_app: { url: `${process.env.FRONT_END_URL}/?token=${token}` },
+                  },
+              ],
+              ],
+            }
+          });
         }
       } catch (err) {
         console.error('Error during registration:', err); // Log the error to the console
         bot.sendMessage(chatId, 'An error occurred while processing your registration. Please try again later.');
       }
-  
+
       // Clear user state
       delete userStates[chatId];
-  
+
     } else if (data === 'cancel') {
       bot.sendMessage(chatId, 'Registration canceled.');
       // Clear user state
       delete userStates[chatId];
     }
   });
-  
-  
+
+
   // Start Game Command
   bot.onText(/\/startgame/, async (msg) => {
     const chatId = msg.chat.id;
@@ -152,7 +164,7 @@ let fetch;
   bot.onText(/\/deposit (\d+)/, async (msg, match) => {
     const chatId = msg.chat.id;
     const amount = match[1];
-    
+
     try {
       const response = await fetch('http://localhost:5000/api/users/deposit', {
         method: 'POST',

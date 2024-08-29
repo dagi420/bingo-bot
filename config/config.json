@@ -1,0 +1,41 @@
+{
+  "development": {
+    "username": "Bingo",
+    "password": "h0FWGc5MwmBv",
+    "database": "Bingo",
+    "host": "ep-shiny-dew-a2r480bi.eu-central-1.aws.neon.tech",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
+  },
+  "test": {
+    "username": "Bingo",
+    "password": "h0FWGc5MwmBv",
+    "database": "Bingo",
+    "host": "ep-shiny-dew-a2r480bi.eu-central-1.aws.neon.tech",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
+  },
+  "production": {
+    "username": "Bingo",
+    "password": "h0FWGc5MwmBv",
+    "database": "Bingo",
+    "host": "ep-shiny-dew-a2r480bi.eu-central-1.aws.neon.tech",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
+  }
+}
